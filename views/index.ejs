@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SoulsGuessr</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto+Condensed&display=swap" rel="stylesheet">
+  </head>
+<body>
+  <button class="config-btn" onclick="abrirConfig()">
+    <!-- Substitua o src pela sua imagem de engrenagem depois -->
+    <img src="https://darksouls3.wiki.fextralife.com/file/Dark-Souls-3/bonewheel_shield.png" alt="Configurações" style="width:32px;height:32px;">
+  </button>
+  <header>
+    <h1>SoulsGuessr</h1>
+    <nav>
+      <a href="#" onclick="abrirPopupNav('popup-sobre')">Sobre</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="main-center-container">
+      <div class="custom-buttons-bar">
+        <a href="/" class="custom-btn" title="Bosses">
+          <img src="https://preview.redd.it/whats-everyones-favorite-boss-by-fight-design-or-lore-ill-v0-wkkqthslijec1.png?width=919&format=png&auto=webp&s=fdb8b657a33df20120ac90b78f401608759050a1" alt="Botão 1">
+        </a>
+      </div>
+      <div class="game-box">
+        <div class="game-box-top">
+          <span class="game-title">Adivinhe o boss de hoje!</span>
+        </div>
+        <div class="game-box-bottom">
+          <form id="form-chute" autocomplete="off" style="display: flex; gap: 1rem; align-items: center; width: 100%; position: relative;">
+            <input type="text" id="input-chute" placeholder="Digite o nome..." required style="flex: 1;" autocomplete="off" />
+            <button class="confirm-btn" type="submit">
+              <img src="images/enviar.png" alt="Confirmar" style="height:28px;width:28px;">
+            </button>
+            <div id="autocomplete-list" style="position:absolute; top:100%; left:0; right:0; background:#222; z-index:10; border-radius:0 0 8px 8px;"></div>
+          </form>
+        </div>
+      </div>
+      <div class="guess-table">
+  <div class="guess-header">
+    <div>Nome</div>
+    <div>Jogo</div>
+    <div>Fraqueza</div>
+    <div>Local</div>
+    <div>HP</div>
+  </div>
+  <% if (userAttempts && userAttempts.length > 0) { %>
+    <% userAttempts.slice().reverse().forEach(function(attempt) { %>
+      <% if (attempt.bossId && attempt.comparison) { %>
+        <div class="guess-row">
+          <div class="guess-cell <%- attempt.comparison.nomeStatus %>"><%- attempt.comparison.nome %></div>
+          <div class="guess-cell <%- attempt.comparison.jogoStatus %>"><%- attempt.comparison.jogo %></div>
+          <div class="guess-cell <%- attempt.comparison.fraquezaStatus %>"><%- attempt.comparison.fraqueza %></div>
+          <div class="guess-cell <%- attempt.comparison.localStatus %>"><%- attempt.comparison.local %></div>
+          <div class="guess-cell <%- attempt.comparison.hpStatus %>"><%- attempt.comparison.hp %></div>
+        </div>
+      <% } %>
+    <% }); %>
+  <% } %>
+</div>
+    </div>
+  </main>
+
+  <!-- Botão de ajuda fixo no canto inferior direito -->
+  <button class="ajuda-indicadores" onclick="abrirPopup()">?</button>
+
+  <!-- Modal de explicação -->
+  <div id="popup-indicadores" class="popup-indicadores">
+    <div class="popup-conteudo">
+      <span class="fechar" onclick="fecharPopup()">&times;</span>
+      <h3>O que significa cada cor?</h3>
+      <ul>
+        <li><span class="indicador correto"></span> <b>Correto:</b> A resposta está certa!</li>
+        <li><span class="indicador parcial"></span> <b>Parcial:</b> A resposta está parcialmente correta.</li>
+        <li><span class="indicador incorreto"></span> <b>Incorreto:</b> A resposta está errada.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Modal de configurações -->
+  <div id="popup-config" class="popup-indicadores">
+    <div class="popup-conteudo">
+      <span class="fechar" onclick="fecharConfig()">&times;</span>
+      <h3>Configurações</h3>
+      <!-- Coloque aqui as opções de configuração que desejar -->
+      <p>Em breve...</p>
+    </div>
+  </div>
+
+  <!-- Popups para navegação -->
+  <div id="popup-sobre" class="popup-indicadores">
+    <div class="popup-conteudo">
+      <span class="fechar" onclick="fecharPopupNav('popup-sobre')">&times;</span>
+      <h3>Sobre o SoulsGuessr</h3>
+      <div style="text-align: left; line-height: 1.6; color: #ddd;">
+        <p><strong>🎮 O que é o SoulsGuessr?</strong></p>
+        <p>SoulsGuessr é um jogo de adivinhação diário inspirado nos jogos da FromSoftware (Dark Souls, Elden Ring, Sekiro, etc.). Todos os dias, um novo boss é selecionado e você precisa adivinhar qual é baseado nas dicas fornecidas.</p>
+        
+        <p><strong>🎯 Como jogar?</strong></p>
+        <p>• Digite o nome de um boss no campo de busca<br>
+        • Analise as pistas: Nome, Jogo, Fraqueza, Local e HP<br>
+        • Use as cores dos indicadores para se aproximar da resposta<br>
+        • Você tem tentativas ilimitadas até acertar!</p>
+        
+        <p><strong>🌟 Inspirações</strong></p>
+        <p>Este jogo foi inspirado no <strong>Wordle</strong> e especialmente no <strong><a href="https://onepiecedle.net" target="_blank" style="color: #8b0000;">onepiecedle.net</a></strong>, adaptado para o universo épico dos jogos da FromSoftware.</p>
+        
+        <p><strong>⏰ Novo desafio diário</strong></p>
+        <p>Um novo boss é selecionado automaticamente todos os dias à meia-noite. Volte amanhã para um novo desafio!</p>
+        
+        <p style="text-align: center; margin-top: 20px; font-size: 0.9em; color: #888;">
+          Feito com ❤️ para os fãs da FromSoftware
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 SoulsGuessr. Inspirado em FromSoftware.</p>
+  </footer>
+
+  <script>
+  function abrirPopup() {
+    document.getElementById('popup-indicadores').classList.add('ativo');
+  }
+  function fecharPopup() {
+    document.getElementById('popup-indicadores').classList.remove('ativo');
+  }
+  function abrirConfig() {
+    document.getElementById('popup-config').classList.add('ativo');
+  }
+  function fecharConfig() {
+    document.getElementById('popup-config').classList.remove('ativo');
+  }
+  function abrirPopupNav(id) {
+    document.getElementById(id).classList.add('ativo');
+  }
+  function fecharPopupNav(id) {
+    document.getElementById(id).classList.remove('ativo');
+  }
+  // Fechar ao clicar fora do conteúdo
+  window.onclick = function(event) {
+    ['popup-sobre'].forEach(function(id){
+      const popup = document.getElementById(id);
+      if (event.target === popup) {
+        fecharPopupNav(id);
+      }
+    });
+    // Mantém os outros popups funcionando
+    const popup = document.getElementById('popup-indicadores');
+    if (event.target === popup) fecharPopup();
+    const popupConfig = document.getElementById('popup-config');
+    if (event.target === popupConfig) fecharConfig();
+  }
+
+  // Exemplo simples para adicionar uma linha (adicione ao seu JS)
+function adicionarTentativa(tentativa) {
+  const tabela = document.querySelector('.guess-table');
+  const header = document.querySelector('.guess-header');
+  const row = document.createElement('div');
+  row.className = 'guess-row';
+  row.innerHTML = `
+    <div class="guess-cell ${tentativa.nomeStatus}">${tentativa.nome}</div>
+    <div class="guess-cell ${tentativa.jogoStatus}">${tentativa.jogo}</div>
+    <div class="guess-cell ${tentativa.fraquezaStatus}">${tentativa.fraqueza}</div>
+    <div class="guess-cell ${tentativa.localStatus}">${tentativa.local}</div>
+    <div class="guess-cell ${tentativa.hpStatus}">${tentativa.hp}</div>
+  `;
+  // Insere a nova tentativa logo após o header (no topo)
+  tabela.insertBefore(row, header.nextSibling);
+}
+
+
+document.getElementById('form-chute').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const nome = document.getElementById('input-chute').value;
+  const res = await fetch('/chute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome })
+  });
+  const data = await res.json();
+  
+  if (data.completed && data.message) {
+    alert(data.message);
+    return;
+  }
+  
+  if (data.alreadyTried) {
+    alert(data.message);
+    return;
+  }
+  
+  if (data.found) {
+    adicionarTentativa(data.tentativa);
+    
+    if (data.completed) {
+      // Remove o formulário completamente
+      const form = document.getElementById('form-chute');
+      form.style.display = 'none';
+      
+      // Adiciona mensagem visual de sucesso no lugar do formulário
+      const gameBox = document.querySelector('.game-box-bottom');
+      const completedMsg = document.createElement('div');
+      completedMsg.style.cssText = 'color: #4CAF50; text-align: center; margin-top: 10px; font-weight: bold; font-size: 18px;';
+      completedMsg.textContent = '✅ Parabéns! Você completou o desafio de hoje! Volte amanhã.';
+      gameBox.appendChild(completedMsg);
+    }
+  } else {
+    alert('Boss não encontrado!');
+  }
+  document.getElementById('input-chute').value = '';
+});
+
+const inputChute = document.getElementById('input-chute');
+const autocompleteList = document.getElementById('autocomplete-list');
+
+inputChute.addEventListener('input', async function() {
+  const q = inputChute.value.trim();
+  if (!q) {
+    autocompleteList.innerHTML = '';
+    return;
+  }
+  const res = await fetch(`/autocomplete?q=${encodeURIComponent(q)}`);
+  const sugestoes = await res.json();
+  if (sugestoes.length === 0) {
+    autocompleteList.innerHTML = '';
+    return;
+  }
+  autocompleteList.innerHTML = sugestoes.map(s =>
+    `<div class="autocomplete-item" style="display:flex;align-items:center;gap:8px;padding:6px;cursor:pointer;">
+      <img src="${s.imagem || '/images/enviar.png'}" alt="${s.nome}" style="width:32px;height:32px;border-radius:4px;">
+      <span>${s.nome}</span>
+    </div>`
+  ).join('');
+  // Clique na sugestão preenche o input
+  Array.from(autocompleteList.children).forEach((item, idx) => {
+    item.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      inputChute.value = sugestoes[idx].nome;
+      autocompleteList.innerHTML = '';
+    });
+  });
+});
+
+// Fecha a lista ao clicar fora
+document.addEventListener('click', function(e) {
+  if (!autocompleteList.contains(e.target) && e.target !== inputChute) {
+    autocompleteList.innerHTML = '';
+  }
+});
+
+// Verifica se o jogo já foi completado ao carregar a página
+<% if (completed) { %>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Remove o formulário completamente
+    const form = document.getElementById('form-chute');
+    form.style.display = 'none';
+    
+    // Adiciona uma mensagem visual no lugar
+    const gameBox = document.querySelector('.game-box-bottom');
+    const completedMsg = document.createElement('div');
+    completedMsg.style.cssText = 'color: #4CAF50; text-align: center; margin-top: 10px; font-weight: bold; font-size: 18px;';
+    completedMsg.textContent = '✅ Parabéns! Você completou o desafio de hoje! Volte amanhã.';
+    gameBox.appendChild(completedMsg);
+  });
+<% } %>
+  </script>
+</body>
+</html>
