@@ -4,7 +4,7 @@ const Boss = require('../models/Boss');
 const UserAttempt = require('../models/UserAttempt');
 const dailyChallengeService = require('../services/DailyChallengeService');
 
-/* Página inicial */
+
 router.get('/', async function(req, res, next) {
   try {
     // Pega o desafio do dia atual
